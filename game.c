@@ -14,6 +14,7 @@ int mapSetup();
 Player * playerSetup();
 int handleInput(int input, Player * user);
 int playerMove(int y, int x, Player * user);
+int checkPosition();
 
 int main () {
 	setlocale(LC_ALL, ""); // required for UTF-8 encoding
@@ -40,24 +41,24 @@ int screenSetup() {
 
 int mapSetup () {
   mvprintw(13, 13, "--------------------");
-  mvprintw(14, 13, "|------------------|");
-  mvprintw(15, 13, "|------------------|");
-  mvprintw(16, 13, "|------------------|");
-  mvprintw(17, 13, "|------------------|");
+  mvprintw(14, 13, "|..................|");
+  mvprintw(15, 13, "|..................|");
+  mvprintw(16, 13, "|..................|");
+  mvprintw(17, 13, "|..................|");
   mvprintw(18, 13, "--------------------");
   
   mvprintw(2, 44, "--------------------");
-  mvprintw(3, 44, "|------------------|");
-  mvprintw(4, 44, "|------------------|");
-  mvprintw(5, 44, "|------------------|");
-  mvprintw(6, 44, "|------------------|");
+  mvprintw(3, 44, "|..................|");
+  mvprintw(4, 44, "|..................|");
+  mvprintw(5, 44, "|..................|");
+  mvprintw(6, 44, "|..................|");
   mvprintw(7, 44, "--------------------");
 
   mvprintw(10, 40, "--------------------");
-  mvprintw(11, 40, "|------------------|");
-  mvprintw(12, 40, "|------------------|");
-  mvprintw(13, 40, "|------------------|");
-  mvprintw(14, 40, "|------------------|");
+  mvprintw(11, 40, "|..................|");
+  mvprintw(12, 40, "|..................|");
+  mvprintw(13, 40, "|..................|");
+  mvprintw(14, 40, "|..................|");
   mvprintw(15, 40, "--------------------");
 }
 
@@ -67,25 +68,44 @@ Player * playerSetup() {
   newPlayer->xPosition = 14;
   newPlayer->yPosition = 14;
   newPlayer->health = 20;
-  playerMove(14, 14, newPlayer);
+  playerMove(16, 16, newPlayer); // player start position
   return newPlayer;
 }
 
 int handleInput(int input, Player * user) {
+  int newY;
+  int newX;
   switch (input) {
     case 'w':
-      playerMove(user->yPosition - 1 , user->xPosition, user);
+      newY = user->yPosition - 1;
+      newX = user->xPosition;
       break;
     case 'a':
-      playerMove(user->yPosition, user->xPosition - 1, user);
+      newY = user->yPosition;
+      newX = user->xPosition - 1;
       break;
     case 's':
-      playerMove(user->yPosition + 1, user->xPosition, user);
+      newY = user->yPosition + 1;
+      newX = user->xPosition;
       break;
     case 'd':
-      playerMove(user->yPosition, user->xPosition + 1, user);
+      newY = user->yPosition;
+      newX = user->xPosition + 1;
       break;
     default:
+      break;
+  }
+  checkPosition(newY, newX, user);
+}
+// Check what is at next position
+int checkPosition(int newY, int newX, Player * user) {
+  int space;
+  switch (mvinch(newY, newX)) {
+    case '.':
+      playerMove(newY, newX, user);
+      break;
+    default:
+      move(user->yPosition, user->xPosition);
       break;
   }
 }
