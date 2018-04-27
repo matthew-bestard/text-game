@@ -12,13 +12,19 @@ typedef struct Player {
 int screenSetup();
 int mapSetup();
 Player * playerSetup();
+int handleInput(int input, Player * user);
+int playerMove(int y, int x, Player * user);
 
 int main () {
 	setlocale(LC_ALL, ""); // required for UTF-8 encoding
   Player * user;
+	int ch;
   screenSetup();
   mapSetup();
   user = playerSetup();
+	while ((ch = getch()) != 'q') {
+		handleInput(ch, user);
+	}
   getch();
   endwin(); // required for ncurses to work
   return 0;
@@ -64,4 +70,32 @@ Player * playerSetup() {
   mvprintw(newPlayer->xPosition, newPlayer->yPosition, "@");
   move(newPlayer->xPosition, newPlayer->yPosition);
   return newPlayer;
+}
+
+int handleInput(int input, Player * user) {
+  switch (input) {
+    case 'w':
+      playerMove(user->yPosition - 1 , user->xPosition, user);
+      break;
+    case 'a':
+      playerMove(user->yPosition, user->xPosition - 1, user);
+      break;
+    case 's':
+      playerMove(user->yPosition + 1, user->xPosition, user);
+      break;
+    case 'd':
+      playerMove(user->yPosition, user->xPosition + 1, user);
+      break;
+    default:
+      break;
+  }
+}
+
+int playerMove(int y, int x, Player * user) {
+  mvprintw(user->yPosition, user->xPosition, ".");
+  user->yPosition = y;
+  user->xPosition = x;
+
+  mvprintw(user->yPosition, user->xPosition, "@");
+  move(user->yPosition, user->xPosition);
 }
