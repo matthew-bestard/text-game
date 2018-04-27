@@ -67,8 +67,7 @@ Player * playerSetup() {
   newPlayer->xPosition = 14;
   newPlayer->yPosition = 14;
   newPlayer->health = 20;
-  mvprintw(newPlayer->xPosition, newPlayer->yPosition, "@");
-  move(newPlayer->xPosition, newPlayer->yPosition);
+  playerMove(14, 14, newPlayer);
   return newPlayer;
 }
 
