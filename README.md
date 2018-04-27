@@ -1,4 +1,4 @@
-# Simple Text-Based Roguelike
+# Simple Text-Based Roguelike using Ncurses 6.1
 
 This is my Fullstack Academy stackathon project. At Fullstack Academy, the main programming language that we use is javascript though for this project I wanted to explore using another programming language. In this case, I decided to use C. I chose this language because I have an interest in lower-level programming languages and their ability to manipulate
 memory directly, generally run more efficiently or "run closer to the metal".
