@@ -7,3 +7,5 @@ To explore programming in C or C++ I will be creating a ascii graphics, text-bas
 I personally like the aesthetic and funtional minimalism of videogames from the 70s- to the 90s that older games like Rogue and news games like
 Dwarf Fortress or The Caves of Qud embody. The emphasis on the game was the functionality rather than the appearence and the the older games especially
 used the reasources that were available to them to the fullest.
+
+This project is using ncurses 6.1
