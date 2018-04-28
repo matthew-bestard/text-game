@@ -3,7 +3,13 @@
 #include <locale.h> // required for UTF-8 encoding
 #include <stdlib.h> // required for malloc
 
-typedef struct Room {
+typedef struct Monster { // defines a struct for monster npcs
+  int xPosition;
+  int yPosition;
+  int health;
+} Monster;
+
+typedef struct Room { // defines a struct for Rooms 
   int xPosition;
   int yPosition;
   int heigt;
@@ -11,7 +17,7 @@ typedef struct Room {
   Monster ** monsters;
 } Room;
 
-typedef struct Player {
+typedef struct Player { // defines a struct for Players 
   int xPosition;
   int yPosition;
   int health;
@@ -25,9 +31,9 @@ int playerMove(int y, int x, Player * user);
 int checkPosition();
 
 int main () {
-	setlocale(LC_ALL, ""); // required for UTF-8 encoding
-  Player * user;
-	int ch;
+	setlocale(LC_ALL, ""); // required for UTF-8 encoding, MUST BE CALLED BEFORE ANYTHING ELSE!
+  Player * user; // variable that will hold the new user
+	int ch; // variable used to get input from terminal for use in gameloop and handleInput functions
   screenSetup();
   mapSetup();
   user = playerSetup();
@@ -105,21 +111,21 @@ int handleInput(int input, Player * user) {
   }
   checkPosition(newY, newX, user);
 }
-// Check what is at next position
-int checkPosition(int newY, int newX, Player * user) {
+
+int checkPosition(int newY, int newX, Player * user) { // Check what character is at next intended move position(y and x coordinates), if that word is a period, move the player using playerMove function, else do not move player but move cursor back to position over player @ symbol
   int space;
-  switch (mvinch(newY, newX)) {
+  switch (mvinch(newY, newX)) { // this switch statement is evaluating the character at the next intended Player position using the mvinch ncurses function with the next intened y and x coordinates passed in. If  mvinch returns a . character then the playerMove function is run with the newY, newX positions and the user pointer, pointing to the Player struct passed in
     case '.':
       playerMove(newY, newX, user);
       break;
     default:
-      move(user->yPosition, user->xPosition);
+      move(user->yPosition, user->xPosition); // this case is used to move the cursor back onto the Player if when a user types in a command, the mvinch function determines that the intened move coordinates contain a character that the Player cannot move onto
       break;
   }
 }
 
-int playerMove(int y, int x, Player * user) {
-  mvprintw(user->yPosition, user->xPosition, ".");
+int playerMove(int y, int x, Player * user) { // this command is run to move, the Player(or user) to their new intended move coordinates, whose direction and distance are determined by the switch in handleInput as well as the newY and newX variables being assigned in such a was as to increase the characters position 1 unit in the selected direction as controlled by the WASD keys
+  mvprintw(user->yPosition, user->xPosition, "."); 
   user->yPosition = y;
   user->xPosition = x;
 
