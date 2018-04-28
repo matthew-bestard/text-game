@@ -3,6 +3,14 @@
 #include <locale.h> // required for UTF-8 encoding
 #include <stdlib.h> // required for malloc
 
+typedef struct Room {
+  int xPosition;
+  int yPosition;
+  int heigt;
+  int width;
+  Monster ** monsters;
+} Room;
+
 typedef struct Player {
   int xPosition;
   int yPosition;
