@@ -1,2 +1,7 @@
-game : game.c
-	gcc -o game game.c -lncursesw
+all: game
+
+game:
+	gcc -o game ./src/*.c -lncursesw
+
+clean:
+	rm game
