@@ -4,7 +4,7 @@ This is my Fullstack Academy stackathon project. At Fullstack Academy, the main 
 memory directly, generally run more efficiently or "run closer to the metal".
 
 To explore programming in C, I will be creating an ascii graphics, text-based videogame that will be run from the console and use ncurses. I chose this because 1.
-I personally like the aesthetic and funtional minimalism of videogames from the 70s- to the 90s that older games like Rogue and newer games like
+I personally like the aesthetic and funtional minimalism of videogames from the 70s- to the 90s that older games like Rogue, Nethack and newer games like
 Dwarf Fortress or The Caves of Qud embody. The emphasis for these types game is functionality rather than appearence and the the older games especially
 used the reasources that were available to them to the fullest.
 
