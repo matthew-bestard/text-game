@@ -1,5 +1,5 @@
-#define _XOPEN_SOURCE_EXTENDED // required for UTF-8 encoding
-#include <ncursesw/curses.h> // required for UTF-8 encoding
+#define _XOPEN_SOURCE_EXTENDED // required for UTF-8 encoding, contains functions to deal with wide characters
+#include <ncursesw/curses.h> // required for UTF-8 encoding, wide character ncurses
 #include <locale.h> // required for UTF-8 encoding
 #include <stdlib.h> // required for malloc
 #include <time.h> // required for rand and srand functions to create random numbers
@@ -48,7 +48,6 @@ int playerMove(int y, int x, Player * user, Level * newLevel);
 int checkPosition(int newY, int newX, Player * user, Level * newLevel);
 
 // room creation function definitions
-// Room * createRoom(int x, int y, int height, int width);
 Room * createRoom(int x, int y, int height, int width);
 int drawRoom(Room * room, Level * newLevel);
 int connectDoors(Position * doorOne, Position * doorTwo, Level * newLevel);
@@ -57,10 +56,8 @@ int main () {
 	setlocale(LC_ALL, ""); // required for UTF-8 encoding, MUST BE CALLED BEFORE ANYTHING ELSE!
   srand(time(NULL)); // seeds random number generator with time from the operating system
   screenSetup(); // initializes ncurses terminal screen
-
   Level * generatedLevel;
   generatedLevel = mapSetup(); // creates rooms
-
   Player * user; // variable that will hold the new user
 	int ch; // variable used to get input from terminal for use in gameloop and handleInput functions
   user = playerSetup(generatedLevel);
@@ -74,7 +71,6 @@ int main () {
 
 int screenSetup() { // initializes ncurses terminal screen 
   initscr(); // required for ncurses to work
-  printw("initializing ncurses");
   noecho();
   refresh();
   return 0;
@@ -95,52 +91,14 @@ Level * mapSetup () { // this function generates the map for a level and draws i
        newLevel->levelMap[y][x] = 1;
      }
   }
-  newLevel->rooms[0] = createRoom(13, 13, 6, 8);
-  newLevel->rooms[1] = createRoom(40, 2, 6, 8);
-  newLevel->rooms[2] = createRoom(40, 10, 6, 12);
+  newLevel->rooms[0] = createRoom(14, 13, 6, 8);
+  newLevel->rooms[1] = createRoom(34, 5, 6, 8); // middle room
+  newLevel->rooms[2] = createRoom(61, 15, 6, 12);
   drawRoom(newLevel->rooms[0], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
   drawRoom(newLevel->rooms[1], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
   drawRoom(newLevel->rooms[2], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
   connectDoors(newLevel->rooms[0]->doors[3], newLevel->rooms[2]->doors[1], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
   connectDoors(newLevel->rooms[1]->doors[2], newLevel->rooms[0]->doors[0], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
-
-	// Room ** rooms; // initializes an array of rooms of the Room struct type
-  // rooms = malloc(sizeof(Room)*6); // creates enough memory to store 6 rooms in the array rooms
-
-  // mvprintw(13, 13, "--------------------");
-  // mvprintw(14, 13, "|..................|");
-  // mvprintw(15, 13, "|..................|");
-  // mvprintw(16, 13, "|..................|");
-  // mvprintw(17, 13, "|..................|");
-  // mvprintw(18, 13, "--------------------");
-
-  // rooms[0] = createRoom(13, 13, 6, 8); // creates a room of given size with the createRoom function and places it in the 0th index of the rooms array
-  // drawRoom(rooms[0]); // this function draws the room struct that was created and placed at the 0th index of the rooms array on the ncurses screen
-  
-  // mvprintw(2, 44, "--------------------");
-  // mvprintw(3, 44, "|..................|");
-  // mvprintw(4, 44, "|..................|");
-  // mvprintw(5, 44, "|..................|");
-  // mvprintw(6, 44, "|..................|");
-  // mvprintw(7, 44, "--------------------");
-
-  // rooms[1] = createRoom(40, 2, 6, 8); // see line 81
-  // drawRoom(rooms[1]); // see line 82
-
-  // mvprintw(10, 40, "--------------------");
-  // mvprintw(11, 40, "|..................|");
-  // mvprintw(12, 40, "|..................|");
-  // mvprintw(13, 40, "|..................|");
-  // mvprintw(14, 40, "|..................|");
-  // mvprintw(15, 40, "--------------------");
-
-  // rooms[2] = createRoom(40, 10, 6, 12); // see line 81
-  // drawRoom(rooms[2]); // see line 82
-
-  // connectDoors(rooms[0]->doors[3], rooms[2]->doors[1]);
-  // connectDoors(rooms[1]->doors[2], rooms[0]->doors[0]);
-  // connectDoors(rooms[0]->doors[3], rooms[2]->doors[1]);
-
   return newLevel; // returns the rooms array of type Room struct
 }
 
@@ -199,14 +157,11 @@ int checkPosition(int newY, int newX, Player * user, Level * newLevel) { // Chec
 }
 
 int playerMove(int newY, int newX, Player * user, Level * newLevel) { // this command is run to move, the Player(or user) to their new intended move coordinates, whose direction and distance are determined by the switch in handleInput as well as the newY and newX variables being assigned in such a was as to increase the characters position 1 unit in the selected direction as controlled by the WASD keys player movement is mainly moved by this and is constrained by the checkposition function that will stop a player from being moved to a given postion if the tile does not allow a player to move there as set in the checkPosition function
-
   char buffer[8];
   sprintf(buffer, "%c", newLevel->levelMap[user->position.y][user->position.x]);
   mvprintw(user->position.y, user->position.x, buffer); // first replace the player's current position with a . symbol
-
   user->position.y = newY; // set passed in user's new y position
   user->position.x = newX; // set passed in user's new x position
-
   mvprintw(user->position.y, user->position.x, "@"); // print @ symbol at the user's new position defined inside the user struct
   move(user->position.y, user->position.x); // finally move cursor back on top of the player's @ character by using the position data in the passed in user's struct
 }
@@ -218,24 +173,19 @@ Room * createRoom(int x, int y, int height, int width) { // this creates a room 
   newRoom->position.y = y;
   newRoom->height = height;
   newRoom->width = width;
-
   newRoom->doors = malloc(sizeof(Position) * 4);
-
   // top door
   newRoom->doors[0] = malloc(sizeof(Position));
   newRoom->doors[0]->x = rand() % (width - 2) + newRoom->position.x + 1;
   newRoom->doors[0]->y = newRoom->position.y;
-
   // left door
   newRoom->doors[1] = malloc(sizeof(Position));
   newRoom->doors[1]->y = rand() % (height - 2) + newRoom->position.y + 1;
   newRoom->doors[1]->x = newRoom->position.x;
-
   // bottom door
   newRoom->doors[2] = malloc(sizeof(Position));
   newRoom->doors[2]->x = rand() % (width - 2) + newRoom->position.x + 1;
   newRoom->doors[2]->y = newRoom->position.y + newRoom->height - 1;
-
   // right door
   newRoom->doors[3] = malloc(sizeof(Position));
   newRoom->doors[3]->y= rand() % (height - 2) + newRoom->position.y + 1;
@@ -248,15 +198,12 @@ int drawRoom(Room * room, Level * newLevel) { // draws a room on the ncurses scr
   int y1;
   int x;
   int y;
-
   // -------------------------------------------------------------------------------------------------------
-
   // draw top and bottom of a room on the levelMap
   for (x1 = room->position.x; x1 < room->position.x + room->width; x1++) {
     newLevel->levelMap[room->position.y][x1] = '-'; // drawing top of room
     newLevel->levelMap[room->position.y + room->height - 1][x1] = '-'; // drawing bottom of room
   }
-
   // drawing walls here on the levelMap
   for (y1 = room->position.y + 1; y1 < room->position.y + room->height - 1; y1++) {
     newLevel->levelMap[y1][room->position.x] = '|';
@@ -266,21 +213,17 @@ int drawRoom(Room * room, Level * newLevel) { // draws a room on the ncurses scr
        newLevel->levelMap[y1][x1] = '.';
     }
   }
-
   // draw doors here on the levelMap
   newLevel->levelMap[room->doors[0]->y][room->doors[0]->x] = '+';
   newLevel->levelMap[room->doors[1]->y][room->doors[1]->x] = '+';
   newLevel->levelMap[room->doors[2]->y][room->doors[2]->x] = '+';
   newLevel->levelMap[room->doors[3]->y][room->doors[3]->x] = '+';
-
   // -------------------------------------------------------------------------------------------------------
-
   // draw top and bottom of a room on the ncurses screen
   for (x = room->position.x; x < room->position.x + room->width; x++) {
     mvprintw(room->position.y, x, "-"); // drawing top of room
     mvprintw(room->position.y + room->height - 1, x, "-"); // drawing bottom of room
   }
-
   // drawing walls here on the ncurses screen
   for (y = room->position.y + 1; y < room->position.y + room->height - 1; y++) {
     mvprintw(y, room->position.x, "|");
@@ -290,7 +233,6 @@ int drawRoom(Room * room, Level * newLevel) { // draws a room on the ncurses scr
       mvprintw(y, x, ".");
     }
   }
-
   // draw doors here on the ncurses screen
   mvprintw(room->doors[0]->y, room->doors[0]->x, "+" );
   mvprintw(room->doors[1]->y, room->doors[1]->x, "+" );
@@ -306,7 +248,6 @@ int connectDoors(Position * doorOne, Position * doorTwo, Level * newLevel) {
   temp.x = doorOne->x;
   temp.y = doorOne->y;
   previous = temp;
-
   while(1) {
     // step left
     if ((abs((temp.x - 1) - doorTwo->x ) < abs(temp.x - doorTwo->x)) && (mvinch(temp.y, temp.x - 1) == ' ')) {
@@ -337,6 +278,5 @@ int connectDoors(Position * doorOne, Position * doorTwo, Level * newLevel) {
     mvprintw(temp.y, temp.x, "#");
     // getch();
   }
-
   return 1;
 }
