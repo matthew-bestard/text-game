@@ -30,7 +30,6 @@ typedef struct Player { // defines a struct for Players
   int health;
   int attack;
   int defense;
-  // Room * room;
 } Player;
 
 typedef struct Monster { // defines a struct for monster npcs
