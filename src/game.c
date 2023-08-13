@@ -1,5 +1,4 @@
-#define _XOPEN_SOURCE_EXTENDED // required for UTF-8 encoding, contains functions to deal with wide characters
-#include <ncursesw/curses.h> // required for UTF-8 encoding, wide character ncurses
+#include <curses.h> // required for UTF-8 encoding, wide character ncurses
 #include <locale.h> // required for UTF-8 encoding
 #include <stdlib.h> // required for malloc
 #include <time.h> // required for rand and srand functions to create random numbers
