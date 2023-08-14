@@ -5,29 +5,55 @@
 
 /* Implementations of functions declared in level.h */
 Level *mapSetup () {
-  Level *newLevel;
-  newLevel = malloc(sizeof(Level));
-  newLevel->rooms = malloc(sizeof(Room)*6);
+  Level *newLevel = malloc(sizeof(Level));
+  if (newLevel == NULL) {
+    return NULL;
+  }
+
+  newLevel->rooms = malloc(sizeof(Room) * 6);
+  if (newLevel->rooms == NULL) {
+    free(newLevel);
+    return NULL;
+  }
+
   newLevel->ySize = 25;
   newLevel->xSize = 100;
-  newLevel->levelMap = malloc(sizeof(char * ) * 25);
-  int y;
-  int x;
-  for (y = 0; y < newLevel->ySize; y++) {
-    newLevel->levelMap[y] = malloc(sizeof(char * ) * 100);
-     for(x = 0; x < newLevel->xSize; x++) {
+  newLevel->levelMap = malloc(sizeof(char *) * newLevel->ySize);
+  if (newLevel->levelMap == NULL) {
+    free(newLevel->rooms);
+    free(newLevel);
+  }
+
+  for (int y = 0; y < newLevel->ySize; y++) {
+    newLevel->levelMap[y] = malloc(sizeof(char * ) * newLevel->xSize);
+    if (newLevel->levelMap[y] == NULL) {
+      freeLevel(newLevel);
+      return NULL;
+    }
+
+     for(int x = 0; x < newLevel->xSize; x++) {
        newLevel->levelMap[y][x] = 1;
      }
   }
+
   newLevel->rooms[0] = createRoom(14, 13, 6, 8);
   newLevel->rooms[1] = createRoom(34, 5, 6, 8); // middle room
   newLevel->rooms[2] = createRoom(61, 15, 6, 12);
-  drawRoom(newLevel->rooms[0], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
-  drawRoom(newLevel->rooms[1], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
-  drawRoom(newLevel->rooms[2], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
-  connectDoors(newLevel->rooms[0]->doors[3], newLevel->rooms[2]->doors[1], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
-  connectDoors(newLevel->rooms[1]->doors[2], newLevel->rooms[0]->doors[0], newLevel); // these functions need to be rewritten to write to the map character array in level and then be drawn later
+  drawRoom(newLevel->rooms[0], newLevel);
+  drawRoom(newLevel->rooms[1], newLevel);
+  drawRoom(newLevel->rooms[2], newLevel);
+  connectDoors(newLevel->rooms[0]->doors[3], newLevel->rooms[2]->doors[1], newLevel);
+  connectDoors(newLevel->rooms[1]->doors[2], newLevel->rooms[0]->doors[0], newLevel);
   return newLevel; // returns the rooms array of type Room struct
+}
+
+void freeLevel(Level *level) {
+  for (int y = 0; y < level->ySize; y++) {
+    free(level->levelMap[y]);
+  }
+  free(level->levelMap);
+  free(level->rooms);
+  free(level);
 }
 
 int drawRoom(Room * room, Level * newLevel) { // draws a room on the ncurses screen

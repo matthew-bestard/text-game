@@ -11,6 +11,7 @@ typedef struct Level { // defines a struct for a level
 } Level;
 
 Level *mapSetup();
+void freeLevel(Level *level);
 int drawRoom(Room *room, Level *newLevel);
 int connectDoors(Position * doorOne, Position * doorTwo, Level * newLevel);
 
